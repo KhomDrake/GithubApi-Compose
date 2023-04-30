@@ -1,15 +1,20 @@
 package com.vlv.githubapicompose.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vlv.githubapicompose.ui.theme.Typography
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -20,7 +25,11 @@ fun MainScreen() {
             BottomBar(navHostController = navController)
         },
         content = {
-            BottomNavGraph(navController = navController)
+            Box(modifier = Modifier.padding(
+                bottom = it.calculateBottomPadding()
+            )) {
+                BottomNavGraph(navController = navController)
+            }
         }
     )
 }
@@ -39,8 +48,7 @@ fun BottomBar(navHostController: NavHostController) {
         screens.forEach {
             BarItem(
                 screen = it,
-                currentDestination =
-                currentDestination,
+                currentDestination = currentDestination,
                 navController = navHostController
             )
         }
@@ -55,7 +63,10 @@ fun RowScope.BarItem(
 ) {
     BottomNavigationItem(
         label = {
-            Text(text = screen.title)
+            Text(
+                text = screen.title,
+                style = Typography.body1
+            )
         },
         icon = {
             Icon(imageVector = screen.icon, contentDescription = screen.title)
