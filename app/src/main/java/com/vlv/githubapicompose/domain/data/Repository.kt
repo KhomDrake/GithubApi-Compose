@@ -12,15 +12,27 @@ data class Repositories(
 }
 
 data class Repository(
+    val id: Int,
     val name: String,
+    val fullName: String,
     val authorName: String,
     val stars: Int,
-    val url: String
+    val url: String,
+    val description: String,
+    val watchers: Int,
+    val openIssues: Int,
+    val forks: Int
 ) {
     constructor(response: RepositoryResponse) : this(
+        response.id,
         response.name,
+        response.fullName,
         response.owner.login,
         response.stargazersCount,
-        response.owner.avatarUrl
+        response.owner.avatarUrl,
+        response.description,
+        response.watchers,
+        response.openIssues,
+        response.forks
     )
 }

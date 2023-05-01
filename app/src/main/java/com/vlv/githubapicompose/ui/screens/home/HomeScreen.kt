@@ -1,21 +1,19 @@
-package com.vlv.githubapicompose.ui.screens
+package com.vlv.githubapicompose.ui.screens.home
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.vlv.githubapicompose.ui.screens.home.HomeViewModel
+import com.vlv.githubapicompose.domain.data.StateResponse
 import com.vlv.githubapicompose.ui.screens.home.widget.RepositoriesList
+import com.vlv.githubapicompose.ui.screens.widget.CircularLoading
+import com.vlv.githubapicompose.ui.screens.widget.DefaultError
 import com.vlv.githubapicompose.ui.theme.Typography
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,6 +24,10 @@ fun HomeScreen(navigator: NavController, viewModel: HomeViewModel = koinViewMode
     }
 
     val data = viewModel.state
+
+    LaunchedEffect(key1 = language, block = {
+        viewModel.searchRepository(language)
+    })
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -46,11 +48,33 @@ fun HomeScreen(navigator: NavController, viewModel: HomeViewModel = koinViewMode
                 text = "Language Chosen: Kotlin",
                 modifier = Modifier
                     .padding(top = 16.dp)
-                    .clickable {
-                        viewModel.searchRepository(language)
-                    }
             )
-            RepositoriesList(repositories = data.repositories)
+
+            when(data.state) {
+                StateResponse.SUCCESS -> {
+                    RepositoriesList(
+                        repositories = data.data ?: listOf(),
+                        onClick = {
+                            navigator.navigate(
+                                "detail/${it.id}"
+                            )
+                        }
+                    )
+                }
+                StateResponse.ERROR -> {
+                    DefaultError(
+                        text = "Tentar Novamente",
+                        onClick = {
+                            viewModel.searchRepository(language)
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
+                else -> {
+                     CircularLoading()
+                }
+            }
         }
     }
 }

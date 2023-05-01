@@ -126,8 +126,6 @@ data class RepositoryResponse(
     val pushedAt: String,
     @SerializedName("releases_url")
     val releasesUrl: String,
-    @SerializedName("score")
-    val score: Double,
     @SerializedName("size")
     val size: Int,
     @SerializedName("ssh_url")

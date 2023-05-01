@@ -6,8 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.vlv.githubapicompose.ui.screens.DetailScreen
-import com.vlv.githubapicompose.ui.screens.HomeScreen
+import com.vlv.githubapicompose.ui.screens.detail.DetailScreen
+import com.vlv.githubapicompose.ui.screens.home.HomeScreen
 import com.vlv.githubapicompose.ui.screens.SearchUsersScreen
 
 @Composable
@@ -20,18 +20,14 @@ fun BottomNavGraph(navController: NavHostController) {
             HomeScreen(navController)
         }
         composable(
-            "test/{githubName}/{id}",
+            "detail/{id}",
             arguments = listOf(
-                navArgument("githubName") {
-                    type = NavType.StringType
-                },
                 navArgument("id") {
                     type = NavType.IntType
                 }
             )
         ) {
             DetailScreen(
-                githubName = it.arguments?.getString("githubName") ?: "",
                 id = it.arguments?.getInt("id") ?: 0
             )
         }

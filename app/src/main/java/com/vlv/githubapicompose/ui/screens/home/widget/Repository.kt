@@ -1,6 +1,5 @@
 package com.vlv.githubapicompose.ui.screens.home.widget
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,12 +19,14 @@ import com.vlv.githubapicompose.domain.data.Repository
 import com.vlv.githubapicompose.ui.theme.Typography
 
 @Composable
-fun Repository(repository: Repository) {
+fun Repository(
+    repository: Repository,
+    modifier: Modifier = Modifier
+) {
     Card(
         backgroundColor = Color.White,
         shape = RoundedCornerShape(10.dp),
-        modifier = Modifier
-            .padding(top = 16.dp)
+        modifier = modifier
             .fillMaxWidth()
     ) {
         Column(

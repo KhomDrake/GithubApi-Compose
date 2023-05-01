@@ -1,9 +1,9 @@
 package com.vlv.githubapicompose.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -14,6 +14,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.vlv.githubapicompose.ui.theme.PrimaryColor
+import com.vlv.githubapicompose.ui.theme.SecondaryColor
 import com.vlv.githubapicompose.ui.theme.Typography
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -25,9 +27,11 @@ fun MainScreen() {
             BottomBar(navHostController = navController)
         },
         content = {
-            Box(modifier = Modifier.padding(
-                bottom = it.calculateBottomPadding()
-            )) {
+            Box(
+                modifier = Modifier
+                    .background(PrimaryColor)
+                    .padding(bottom = it.calculateBottomPadding())
+            ) {
                 BottomNavGraph(navController = navController)
             }
         }
@@ -62,6 +66,7 @@ fun RowScope.BarItem(
     navController: NavHostController
 ) {
     BottomNavigationItem(
+        modifier = Modifier.background(SecondaryColor),
         label = {
             Text(
                 text = screen.title,
