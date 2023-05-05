@@ -1,12 +1,21 @@
 package com.vlv.githubapicompose.domain.repository
 
 import com.vlv.githubapicompose.data.GithubApi
-import com.vlv.githubapicompose.data.remote.RepositoriesResponse
+import com.vlv.githubapicompose.domain.paging.RepositoriesPagingSource
 
-class SearchRepository(private val githubApi: GithubApi) {
+class SearchRepository(
+    private val githubApi: GithubApi
+) {
 
-    suspend fun searchRepository(language: String, page: Int) : RepositoriesResponse {
-        return githubApi.repositoryByLanguage("language:$language", page)
-    }
+    fun searchRepositoryPaginated(
+        initialPage: Int,
+        language: String,
+        pageSize: Int
+    ) = RepositoriesPagingSource(
+        githubApi,
+        initialPage,
+        pageSize,
+        "language:$language"
+    )
 
 }

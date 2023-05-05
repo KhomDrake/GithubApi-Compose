@@ -10,11 +10,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.vlv.githubapicompose.domain.data.StateResponse
 import com.vlv.githubapicompose.ui.screens.home.widget.RepositoriesList
 import com.vlv.githubapicompose.ui.screens.widget.CircularLoading
 import com.vlv.githubapicompose.ui.screens.widget.DefaultError
 import com.vlv.githubapicompose.ui.theme.Typography
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.retry
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -23,11 +30,9 @@ fun HomeScreen(navigator: NavController, viewModel: HomeViewModel = koinViewMode
         mutableStateOf("kotlin")
     }
 
-    val data = viewModel.state
+    viewModel.setLanguage(language)
 
-    LaunchedEffect(key1 = language, block = {
-        viewModel.searchRepository(language)
-    })
+    val data = viewModel.repositories.collectAsLazyPagingItems()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -50,10 +55,10 @@ fun HomeScreen(navigator: NavController, viewModel: HomeViewModel = koinViewMode
                     .padding(top = 16.dp)
             )
 
-            when(data.state) {
-                StateResponse.SUCCESS -> {
+            when(data.loadState.refresh) {
+                is LoadState.NotLoading -> {
                     RepositoriesList(
-                        repositories = data.data ?: listOf(),
+                        repositories = data,
                         onClick = {
                             navigator.navigate(
                                 "detail/${it.id}"
@@ -61,18 +66,18 @@ fun HomeScreen(navigator: NavController, viewModel: HomeViewModel = koinViewMode
                         }
                     )
                 }
-                StateResponse.ERROR -> {
+                LoadState.Loading -> {
+                    CircularLoading()
+                }
+                else -> {
                     DefaultError(
                         text = "Tentar Novamente",
                         onClick = {
-                            viewModel.searchRepository(language)
+                            data.retry()
                         },
                         modifier = Modifier
                             .fillMaxSize()
                     )
-                }
-                else -> {
-                     CircularLoading()
                 }
             }
         }
