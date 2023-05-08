@@ -6,14 +6,22 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.vlv.githubapicompose.domain.repository.SearchRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: SearchRepository) : ViewModel() {
 
-    private var language = "kotlin"
     private val pageSize = 30
 
-    fun setLanguage(language: String) {
-        this.language = language
+    private var _languageSearched = MutableStateFlow("kotlin")
+    val languageSearched = _languageSearched.asStateFlow()
+
+    fun setLanguage(language: String) : Boolean {
+        return if(_languageSearched.value != language) {
+            _languageSearched.value = language
+            true
+        } else false
     }
 
     val repositories = Pager(
@@ -23,7 +31,7 @@ class HomeViewModel(private val repository: SearchRepository) : ViewModel() {
             prefetchDistance = 5
         ),
         pagingSourceFactory = {
-            repository.searchRepositoryPaginated(0, language, pageSize)
+            repository.searchRepositoryPaginated(0, _languageSearched.value, pageSize)
         }
     ).flow.cachedIn(viewModelScope)
 }
